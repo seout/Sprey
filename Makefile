@@ -1,6 +1,6 @@
 CC=gcc
 
-CFLGS=-c
+CFLGS=-c -Wall
 
 DELETE=rm -rf conf
 
@@ -8,4 +8,6 @@ build:
 	$(CC) -o conf $(CFLGS) conf.c
 	$(CC) -o main  main.c conf
 	$(DELETE)
-	./main
+
+	#./main -h 1.1.1.1 -p 443 -t 1
+
