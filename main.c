@@ -1,10 +1,7 @@
 #include "wasc.h"
 
 int main(int argc, char *argv[]) {
-    argc = 4;
-    argv[1] = "443";
-    argv[2] = "1.1.1.1";
-    argv[3] = "2";
+
 
     struct infoip configuration;
 
