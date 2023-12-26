@@ -2,9 +2,7 @@
 
 
 int inside(struct infoip * ip) {
-
-    char *header = HEADER;
-    char buff[1024];
+    
     int sock, sendmsg, result, status, flags, temp;
     socklen_t strsize;
     struct sockaddr_in configuration;
@@ -35,10 +33,6 @@ int inside(struct infoip * ip) {
 
     FD_ZERO(&wset);
     FD_SET(sock,&wset);
-
-    temp = write(sock, header, 1024);
-
-    temp = read(sock, &buff, 1024);
 
     if (errno != EINPROGRESS && errno != EWOULDBLOCK)
         return 1;
