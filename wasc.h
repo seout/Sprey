@@ -4,8 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define FD_SETSIZE 8196
-
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
