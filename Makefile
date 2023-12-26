@@ -9,5 +9,5 @@ build:
 	$(CC) -o sprey  main.c conf
 	$(DELETE)
 
-	#./main -h 1.1.1.1 -p 443 -t 1
+	#./sprey -h 1.1.1.1 -p 443 -t 1
 
