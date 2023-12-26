@@ -10,5 +10,7 @@ Use:
    
    -t [This is the argument where we specify the count threads]
 
+To compile, type: make
+
 Example: 
         ./sprey -p 443 -h 1.1.1.1 -t 5
