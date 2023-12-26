@@ -3,7 +3,7 @@
 
 int inside(struct infoip * ip) {
     
-    int sock, sendmsg, result, status, flags, temp;
+    int sock, result, status, flags;
     socklen_t strsize;
     struct sockaddr_in configuration;
 
