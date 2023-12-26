@@ -1,70 +1,67 @@
 #include "wasc.h"
 
+
 int inside(struct infoip * ip) {
 
-    int sock, port, argv, result;
+    char *header = HEADER;
+    char buff[1024];
+    int sock, sendmsg, result, status, flags, temp;
+    socklen_t strsize;
+    struct sockaddr_in configuration;
 
-    char buff[64];
+    fd_set wset;
 
-    char header[] = HEADER;
+    configuration.sin_addr.s_addr = inet_addr(ip->addr);
+    configuration.sin_port        = htons(ip->port);
+    configuration.sin_family      = AF_INET;
 
-    socklen_t usize;
-
-    struct sockaddr_in host;
-
-            host.sin_addr.s_addr = inet_addr(ip->addr);
-            host.sin_port        = htons(ip->port);
-            host.sin_family      = AF_INET;
-
-            usize = sizeof host;
+    strsize = sizeof configuration;
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
 
+    if (sock < 0) {
+        perror("Socket");
+        return -1;
+    }
 
-//    int flags = fcntl(sock,F_GETFL);
+    flags = fcntl(sock,F_GETFL);
 
-//    if (flags >= 0)
-//        flags = fcntl(sock, F_SETFL, O_NONBLOCK);
-
-    int status = connect(sock, (struct sockaddr *)&host, usize);
+    if (flags >= 0)
+        flags = fcntl(sock, F_SETFL, O_NONBLOCK);
 
 
-//    if (errno != EINPROGRESS && errno != EWOULDBLOCK)
-//        return 1;
+    status = connect(sock, (struct sockaddr *)&configuration, strsize);
 
-    result = write(sock, &header, sizeof header);
 
-    result = read(sock, &buff, 64);
+    FD_ZERO(&wset);
+    FD_SET(sock,&wset);
 
-//
-//    if (status < 0) {
-//
-//        struct timeval tv;
-//
-//        tv.tv_sec = 3;
-//        tv.tv_usec = 0;
-//
-//        fd_set wset;
-//
-//        FD_ZERO(&wset);
-//        FD_SET(sock,&wset);
-//
-//        status = select(sock + 1,NULL,&wset,NULL,&tv);
-//
-//        if (status) {
-            printf("\033[032m 64 bytes %s: 200 [+] \n", ip->addr);
-//            close(sock);
-//
-//            return 0;
-//        } else {
-//            printf("\033[031m The %s is'nt responding: [Error]\n", ip->addr);
-//            close(sock);
-//
-//            return -1;
-//        }
-//    }
+    temp = write(sock, header, 1024);
+
+    temp = read(sock, &buff, 1024);
+
+    if (errno != EINPROGRESS && errno != EWOULDBLOCK)
+        return 1;
+
+    if (status < 0) {
+
+        struct timeval tv;
+
+        tv.tv_sec = 0;
+        tv.tv_usec = 70000;
+
+        result = select(sock + 1,NULL,&wset,NULL,&tv);
+
+        if (!result) {
+            printf("\033[031m The %s is'nt responding: [Error]\n", ip->addr);
+            close(sock);
+            return -1;
+        }
+    }
+    printf("\033[032m 64 bytes %s: 200 [+] \n", ip->addr);
 
     close(sock);
+
     return 0;
 }
 
@@ -90,18 +87,17 @@ int splithread(struct infoip *ip) {
 
     int numthr = ip->thread;
 
-        inside(ip);
-        pthread_t num[numthr];
+    pthread_t num[numthr];
 
-//        for (int i = 0; i < numthr; i++) {
-//            if (pthread_create(&num[i], NULL, (void *)&inside, &(*ip)) != 0) {
-//                pthread_detach(num[i]);
-//                continue;
-//            } else {
-//
-//            }
-//        }
+    while (1)
+        for (int i = 0; i < numthr; i++) {
+            if (pthread_create(&num[i], NULL, (void *)&inside, &(*ip)) != 0) {
+                pthread_detach(num[i]);
+                break;
+            }
 
+//            pthread_join(num[i], 0);
+        }
 
     return 0;
 }
